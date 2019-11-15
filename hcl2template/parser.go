@@ -33,14 +33,9 @@ type Parser struct {
 	BuilderSchemas      packer.BuilderFunc
 	CommunicatorSchemas packer.ConfigurableCommunicatorFunc
 
-	ProvisionersSchemas provisionerLoader
+	ProvisionersSchemas packer.ProvisionerStore
 
-	PostProvisionersSchemas provisionerLoader
-}
-
-type provisionerLoader interface {
-	Get(name string) (packer.Provisioner, error)
-	List() (names []string)
+	PostProvisionersSchemas packer.PostProcessorStore
 }
 
 const hcl2FileExt = ".pkr.hcl"

@@ -23,7 +23,7 @@ type ProvisionerGroup struct {
 // provisioners
 type ProvisionerGroups []*ProvisionerGroup
 
-func (p *Parser) decodeProvisionerGroup(block *hcl.Block, provisionerSpecs provisionerLoader) (*ProvisionerGroup, hcl.Diagnostics) {
+func (p *Parser) decodeProvisionerGroup(block *hcl.Block, provisionerSpecs packer.ProvisionerStore) (*ProvisionerGroup, hcl.Diagnostics) {
 	var b struct {
 		Communicator string   `hcl:"communicator,optional"`
 		Remain       hcl.Body `hcl:",remain"`

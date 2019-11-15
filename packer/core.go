@@ -60,6 +60,16 @@ type PostProcessorFunc func(name string) (PostProcessor, error)
 // The function type used to lookup Provisioner implementations.
 type ProvisionerFunc func(name string) (Provisioner, error)
 
+type ProvisionerStore interface {
+	Get(name string) (Provisioner, error)
+	List() (names []string)
+}
+
+type PostProcessorStore interface {
+	Get(name string) (PostProcessor, error)
+	List() (names []string)
+}
+
 // ComponentFinder is a struct that contains the various function
 // pointers necessary to look up components of Packer such as builders,
 // commands, etc.
@@ -68,6 +78,11 @@ type ComponentFinder struct {
 	Hook          HookFunc
 	PostProcessor PostProcessorFunc
 	Provisioner   ProvisionerFunc
+
+	// For HCL2
+	Communicator       ConfigurableCommunicatorFunc
+	ProvisionerStore   ProvisionerStore
+	PostProcessorStore PostProcessorStore
 }
 
 // NewCore creates a new Core.

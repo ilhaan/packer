@@ -27,9 +27,10 @@ type config struct {
 	PluginMinPort              int
 	PluginMaxPort              int
 
-	Builders       map[string]string
-	PostProcessors map[string]string `json:"post-processors"`
-	Provisioners   map[string]string
+	Communicators  mapOfCommunicator
+	Builders       mapOfProvisioner
+	Provisioners   mapOfProvisioner
+	PostProcessors mapOfPostProcessor `json:"post-processors"`
 }
 
 // Decodes configuration in JSON format from the given io.Reader into

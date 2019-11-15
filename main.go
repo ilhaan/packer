@@ -216,6 +216,10 @@ func wrappedMain() int {
 				Hook:          config.LoadHook,
 				PostProcessor: config.LoadPostProcessor,
 				Provisioner:   config.LoadProvisioner,
+
+				Communicator:       config.Communicators.Get,
+				ProvisionerStore:   config.Provisioners,
+				PostProcessorStore: config.PostProcessors,
 			},
 			Version: version.Version,
 		},

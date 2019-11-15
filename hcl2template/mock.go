@@ -75,6 +75,30 @@ func (b *MockProvisioner) Provision(ctx context.Context, ui packer.Ui, comm pack
 }
 
 //////
+// MockPostProcessor
+//////
+
+type MockPostProcessor struct {
+	Config MockConfig
+}
+
+var _ packer.PostProcessor = new(MockPostProcessor)
+
+func (b *MockPostProcessor) ConfigSpec() hcldec.ObjectSpec {
+	return b.Config.FlatMapstructure().HCL2Spec()
+}
+
+func (b *MockPostProcessor) Configure(raws ...interface{}) error {
+	return config.Decode(&b.Config, &config.DecodeOpts{
+		Interpolate: true,
+	}, raws...)
+}
+
+func (b *MockPostProcessor) PostProcess(ctx context.Context, ui packer.Ui, a packer.Artifact) (packer.Artifact, bool, bool, error) {
+	return nil, false, false, nil
+}
+
+//////
 // MockCommunicator
 //////
 

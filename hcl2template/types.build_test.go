@@ -42,6 +42,13 @@ func TestParse_build(t *testing.T) {
 								},
 							},
 						},
+						PostProvisionerGroups: PostProcessorGroups{
+							&PostProcessorGroup{
+								PostProcessors: []PostProcessor{
+									{basicMockPostProcessor},
+								},
+							},
+						},
 					},
 				}},
 			false,

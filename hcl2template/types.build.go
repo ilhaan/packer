@@ -11,7 +11,7 @@ const (
 
 	buildProvisionnersLabel = "provision"
 
-	buildPostProvisionnersLabel = "post_provision"
+	buildPostProvisionnersLabel = "post-process"
 )
 
 var buildSchema = &hcl.BodySchema{
@@ -27,7 +27,7 @@ type Build struct {
 	ProvisionerGroups ProvisionerGroups
 
 	// Ordered list of post-provisioner groups
-	PostProvisionerGroups ProvisionerGroups
+	PostProvisionerGroups PostProcessorGroups
 
 	// Ordered list of output stanzas
 	Froms []SourceRef
@@ -82,7 +82,7 @@ func (p *Parser) decodeBuildConfig(block *hcl.Block) (*Build, hcl.Diagnostics) {
 			diags = append(diags, moreDiags...)
 			build.ProvisionerGroups = append(build.ProvisionerGroups, pg)
 		case buildPostProvisionnersLabel:
-			pg, moreDiags := p.decodeProvisionerGroup(block, p.PostProvisionersSchemas)
+			pg, moreDiags := p.decodePostProcessorGroup(block, p.PostProcessorsSchemas)
 			diags = append(diags, moreDiags...)
 			build.PostProvisionerGroups = append(build.PostProvisionerGroups, pg)
 		}

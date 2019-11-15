@@ -27,9 +27,9 @@ func getBasicParser() *Parser {
 			"shell": &MockProvisioner{},
 			"file":  &MockProvisioner{},
 		}),
-		// PostProvisionersSchemas: mapOfProvisioner(map[string]packer.PostProcessor{
-		// 	"amazon-import": &amazon_import.PostProcessor{},
-		// }),
+		PostProcessorsSchemas: mapOfPostProcessor(map[string]packer.PostProcessor{
+			"amazon-import": &MockPostProcessor{},
+		}),
 		CommunicatorSchemas: mapOfCommunicator(map[string]packer.ConfigurableCommunicator{
 			"ssh":   &MockCommunicator{},
 			"winrm": &MockCommunicator{},
@@ -71,6 +71,25 @@ func (mop mapOfProvisioner) Get(provisioner string) (packer.Provisioner, error) 
 }
 
 func (mod mapOfProvisioner) List() []string {
+	res := []string{}
+	for k := range mod {
+		res = append(res, k)
+	}
+	return res
+}
+
+type mapOfPostProcessor map[string]packer.PostProcessor
+
+func (mop mapOfPostProcessor) Get(postProcessor string) (packer.PostProcessor, error) {
+	p, found := mop[postProcessor]
+	var err error
+	if !found {
+		err = fmt.Errorf("Unknown post-processor %s", postProcessor)
+	}
+	return p, err
+}
+
+func (mod mapOfPostProcessor) List() []string {
 	res := []string{}
 	for k := range mod {
 		res = append(res, k)
@@ -144,6 +163,15 @@ var (
 	}
 
 	basicMockProvisioner = &MockProvisioner{
+		Config: MockConfig{
+			NestedMockConfig: basicNestedMockConfig,
+			Nested:           basicNestedMockConfig,
+			NestedSlice: []NestedMockConfig{
+				{},
+			},
+		},
+	}
+	basicMockPostProcessor = &MockPostProcessor{
 		Config: MockConfig{
 			NestedMockConfig: basicNestedMockConfig,
 			Nested:           basicNestedMockConfig,

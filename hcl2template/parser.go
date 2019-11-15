@@ -35,7 +35,7 @@ type Parser struct {
 
 	ProvisionersSchemas packer.ProvisionerStore
 
-	PostProvisionersSchemas packer.PostProcessorStore
+	PostProcessorsSchemas packer.PostProcessorStore
 }
 
 const hcl2FileExt = ".pkr.hcl"

@@ -1,4 +1,4 @@
-//go:generate mapstructure-to-hcl2 -type MockBuilder,MockCommunicator,RemoteCmd,MockProvisioner
+//go:generate mapstructure-to-hcl2 -type MockBuilder,MockCommunicator,RemoteCmd,MockProvisioner,MockPostProcessor
 
 package packer
 

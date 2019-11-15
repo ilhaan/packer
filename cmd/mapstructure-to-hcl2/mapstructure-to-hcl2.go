@@ -356,6 +356,9 @@ func getUsedImports(s *types.Struct) map[NamePath]*types.Package {
 			continue
 		}
 		pkg := namedType.Obj().Pkg()
+		if pkg == nil {
+			continue
+		}
 		res[NamePath{pkg.Name(), pkg.Path()}] = pkg
 	}
 	return res

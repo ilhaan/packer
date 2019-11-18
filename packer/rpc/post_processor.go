@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/rpc"
 
+	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer/packer"
 )
 
@@ -34,6 +35,11 @@ type PostProcessorProcessResponse struct {
 	Keep          bool
 	ForceOverride bool
 	StreamId      uint32
+}
+
+func (p *postProcessor) ConfigSpec() hcldec.ObjectSpec {
+	panic("not implemented")
+	return nil
 }
 
 func (p *postProcessor) Configure(raw ...interface{}) (err error) {

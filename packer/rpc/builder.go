@@ -3,17 +3,15 @@ package rpc
 import (
 	"context"
 	"log"
-	"net/rpc"
 
-	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer/packer"
 )
 
 // An implementation of packer.Builder where the builder is actually executed
 // over an RPC connection.
 type builder struct {
-	client *rpc.Client
-	mux    *muxBroker
+	commonClient
+	mux *muxBroker
 }
 
 // BuilderServer wraps a packer.Builder implementation and makes it exportable
@@ -22,13 +20,9 @@ type BuilderServer struct {
 	context       context.Context
 	contextCancel func()
 
+	commonServer
 	builder packer.Builder
 	mux     *muxBroker
-}
-
-func (p *builder) ConfigSpec() hcldec.ObjectSpec {
-	panic("not implemented")
-	return nil
 }
 
 type BuilderPrepareArgs struct {

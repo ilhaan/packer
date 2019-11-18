@@ -3,17 +3,15 @@ package rpc
 import (
 	"context"
 	"log"
-	"net/rpc"
 
-	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer/packer"
 )
 
 // An implementation of packer.PostProcessor where the PostProcessor is actually
 // executed over an RPC connection.
 type postProcessor struct {
-	client *rpc.Client
-	mux    *muxBroker
+	commonClient
+	mux *muxBroker
 }
 
 // PostProcessorServer wraps a packer.PostProcessor implementation and makes it
@@ -22,6 +20,7 @@ type PostProcessorServer struct {
 	context       context.Context
 	contextCancel func()
 
+	commonServer
 	mux *muxBroker
 	p   packer.PostProcessor
 }
@@ -35,11 +34,6 @@ type PostProcessorProcessResponse struct {
 	Keep          bool
 	ForceOverride bool
 	StreamId      uint32
-}
-
-func (p *postProcessor) ConfigSpec() hcldec.ObjectSpec {
-	panic("not implemented")
-	return nil
 }
 
 func (p *postProcessor) Configure(raw ...interface{}) (err error) {

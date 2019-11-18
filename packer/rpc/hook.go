@@ -3,7 +3,6 @@ package rpc
 import (
 	"context"
 	"log"
-	"net/rpc"
 	"sync"
 
 	"github.com/hashicorp/packer/packer"
@@ -12,8 +11,8 @@ import (
 // An implementation of packer.Hook where the hook is actually executed
 // over an RPC connection.
 type hook struct {
-	client *rpc.Client
-	mux    *muxBroker
+	commonClient
+	mux *muxBroker
 }
 
 // HookServer wraps a packer.Hook implementation and makes it exportable

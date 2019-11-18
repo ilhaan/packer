@@ -3,17 +3,15 @@ package rpc
 import (
 	"context"
 	"log"
-	"net/rpc"
 
-	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer/packer"
 )
 
 // An implementation of packer.Provisioner where the provisioner is actually
 // executed over an RPC connection.
 type provisioner struct {
-	client *rpc.Client
-	mux    *muxBroker
+	commonClient
+	mux *muxBroker
 }
 
 // ProvisionerServer wraps a packer.Provisioner implementation and makes it
@@ -22,6 +20,7 @@ type ProvisionerServer struct {
 	context       context.Context
 	contextCancel func()
 
+	commonServer
 	p   packer.Provisioner
 	mux *muxBroker
 }
@@ -37,11 +36,6 @@ func (p *provisioner) Prepare(configs ...interface{}) (err error) {
 	}
 
 	return
-}
-
-func (p *provisioner) ConfigSpec() hcldec.ObjectSpec {
-	panic("not implemented")
-	return nil
 }
 
 func (p *provisioner) Provision(ctx context.Context, ui packer.Ui, comm packer.Communicator) error {

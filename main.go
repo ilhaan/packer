@@ -293,6 +293,10 @@ func loadConfig() (*config, error) {
 	var config config
 	config.PluginMinPort = 10000
 	config.PluginMaxPort = 25000
+	config.Communicators = mapOfCommunicator{}
+	config.Builders = mapOfBuilder{}
+	config.PostProcessors = mapOfPostProcessor{}
+	config.Provisioners = mapOfProvisioner{}
 	if err := config.Discover(); err != nil {
 		return nil, err
 	}

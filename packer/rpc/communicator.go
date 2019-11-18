@@ -5,7 +5,6 @@ import (
 	"encoding/gob"
 	"io"
 	"log"
-	"net/rpc"
 	"os"
 	"sync"
 
@@ -15,13 +14,14 @@ import (
 // An implementation of packer.Communicator where the communicator is actually
 // executed over an RPC connection.
 type communicator struct {
-	client *rpc.Client
-	mux    *muxBroker
+	commonClient
+	mux *muxBroker
 }
 
 // CommunicatorServer wraps a packer.Communicator implementation and makes
 // it exportable as part of a Golang RPC server.
 type CommunicatorServer struct {
+	commonServer
 	c   packer.Communicator
 	mux *muxBroker
 }
@@ -59,10 +59,6 @@ type CommunicatorDownloadDirArgs struct {
 	Dst     string
 	Src     string
 	Exclude []string
-}
-
-func Communicator(client *rpc.Client) *communicator {
-	return &communicator{client: client}
 }
 
 func (c *communicator) Start(ctx context.Context, cmd *packer.RemoteCmd) (err error) {

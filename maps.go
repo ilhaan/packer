@@ -6,15 +6,14 @@ import (
 	"github.com/hashicorp/packer/packer"
 )
 
-type mapOfProvisioner map[string]packer.Provisioner
+type mapOfProvisioner map[string]func() (packer.Provisioner, error)
 
 func (mop mapOfProvisioner) Get(provisioner string) (packer.Provisioner, error) {
 	p, found := mop[provisioner]
-	var err error
 	if !found {
-		err = fmt.Errorf("Unknown provisioner %s", provisioner)
+		return nil, fmt.Errorf("Unknown provisioner %s", provisioner)
 	}
-	return p, err
+	return p()
 }
 
 func (mod mapOfProvisioner) List() []string {
@@ -25,15 +24,14 @@ func (mod mapOfProvisioner) List() []string {
 	return res
 }
 
-type mapOfPostProcessor map[string]packer.PostProcessor
+type mapOfPostProcessor map[string]func() (packer.PostProcessor, error)
 
 func (mop mapOfPostProcessor) Get(provisioner string) (packer.PostProcessor, error) {
 	p, found := mop[provisioner]
-	var err error
 	if !found {
-		err = fmt.Errorf("Unknown post-processor %s", provisioner)
+		return nil, fmt.Errorf("Unknown post-processor %s", provisioner)
 	}
-	return p, err
+	return p()
 }
 
 func (mod mapOfPostProcessor) List() []string {
@@ -44,24 +42,22 @@ func (mod mapOfPostProcessor) List() []string {
 	return res
 }
 
-type mapOfBuilder map[string]packer.Builder
+type mapOfBuilder map[string]func() (packer.Builder, error)
 
 func (mob mapOfBuilder) Get(builder string) (packer.Builder, error) {
 	d, found := mob[builder]
-	var err error
 	if !found {
-		err = fmt.Errorf("Unknown builder %s", builder)
+		return nil, fmt.Errorf("Unknown builder %s", builder)
 	}
-	return d, err
+	return d()
 }
 
-type mapOfCommunicator map[string]packer.ConfigurableCommunicator
+type mapOfCommunicator map[string]func() (packer.ConfigurableCommunicator, error)
 
 func (mob mapOfCommunicator) Get(communicator string) (packer.ConfigurableCommunicator, error) {
 	c, found := mob[communicator]
-	var err error
 	if !found {
-		err = fmt.Errorf("Unknown communicator %s", communicator)
+		return nil, fmt.Errorf("Unknown communicator %s", communicator)
 	}
-	return c, err
+	return c()
 }

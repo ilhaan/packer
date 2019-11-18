@@ -1,0 +1,49 @@
+package rpc
+
+import (
+	"fmt"
+	"net/rpc"
+
+	"github.com/hashicorp/hcl/v2/hcldec"
+)
+
+// commonClient allows to rpc call funcs that can be defined on the different
+// build blocks of packer
+type commonClient struct {
+	// endpoint is usually the type of build block we are connecting to.
+	//
+	// eg: Provisioner / PostProcessor / Builder / Artifact / Communicator
+	endpoint string
+	client   *rpc.Client
+}
+
+type commonServer struct {
+	selfConfigurable interface {
+		ConfigSpec() hcldec.ObjectSpec
+	}
+}
+
+type ConfigSpecResponse struct {
+	ConfigSpec hcldec.ObjectSpec
+}
+
+func (p *commonClient) ConfigSpec() hcldec.ObjectSpec {
+	// TODO(azr): the RPC Call can fail but the ConfigSpec signature doesn't
+	// return an error; should we simply panic ? Logging this for now; will
+	// decide later. The correct approach would probably be to return an error
+	// in ConfigSpec but that will break a lot of things.
+	resp := &ConfigSpecResponse{}
+	cerr := p.client.Call(p.endpoint+".ConfigSpec", new(interface{}), resp)
+	if cerr != nil {
+		err := fmt.Errorf("ConfigSpec failed: %v", cerr) 
+		panic(err.Error())
+	}
+	return resp.ConfigSpec
+}
+
+func (s *commonServer) ConfigSpec(_ *interface{}, reply *ConfigSpecResponse) error {
+	spec := s.selfConfigurable.ConfigSpec()
+	spec.
+	// reply.ConfigSpec =
+	return nil
+}

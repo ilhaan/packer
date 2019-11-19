@@ -3,12 +3,12 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/hcl/v2/hcldec"
 	"reflect"
 	"sort"
 	"strings"
 
 	"github.com/hashicorp/go-multierror"
+	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer/template/interpolate"
 	"github.com/mitchellh/mapstructure"
 	"github.com/zclconf/go-cty/cty"

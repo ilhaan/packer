@@ -5,7 +5,6 @@ package cvm
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer/common"
@@ -59,7 +58,6 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	}
 
 	packer.LogSecretFilter.Set(b.config.SecretId, b.config.SecretKey)
-	log.Printf("[DEBUG]packer config: %v", b.config)
 
 	return nil, nil
 }

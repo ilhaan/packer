@@ -220,6 +220,9 @@ func (c *config) discoverInternal() error {
 			}
 		}
 	}
+	sort.Strings(internallyUsed)
+	log.Printf("Using internal plugin for builders %v", internallyUsed)
+	internallyUsed = []string{}
 
 	for provisioner := range command.Provisioners {
 		provisioner := provisioner
@@ -233,6 +236,9 @@ func (c *config) discoverInternal() error {
 			}
 		}
 	}
+	sort.Strings(internallyUsed)
+	log.Printf("Using internal plugin for provisioners %v", internallyUsed)
+	internallyUsed = []string{}
 
 	for postProcessor := range command.PostProcessors {
 		postProcessor := postProcessor
@@ -247,7 +253,7 @@ func (c *config) discoverInternal() error {
 		}
 	}
 	sort.Strings(internallyUsed)
-	log.Printf("Using internal plugin for %v", internallyUsed)
+	log.Printf("Using internal plugin for post-processors %v", internallyUsed)
 
 	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 
 	"github.com/hashicorp/packer/command"
@@ -205,11 +206,13 @@ func (c *config) discoverInternal() error {
 		return err
 	}
 
+	internallyUsed := []string{}
+
 	for builder := range command.Builders {
 		builder := builder
 		_, found := (c.Builders)[builder]
 		if !found {
-			log.Printf("Using internal plugin for %s", builder)
+			internallyUsed = append(internallyUsed, builder)
 			c.Builders[builder] = func() (packer.Builder, error) {
 				bin := fmt.Sprintf("%s%splugin%spacker-builder-%s",
 					packerPath, PACKERSPACE, PACKERSPACE, builder)
@@ -222,7 +225,7 @@ func (c *config) discoverInternal() error {
 		provisioner := provisioner
 		_, found := (c.Provisioners)[provisioner]
 		if !found {
-			log.Printf("Using internal plugin for %s", provisioner)
+			internallyUsed = append(internallyUsed, provisioner)
 			c.Provisioners[provisioner] = func() (packer.Provisioner, error) {
 				bin := fmt.Sprintf("%s%splugin%spacker-provisioner-%s",
 					packerPath, PACKERSPACE, PACKERSPACE, provisioner)
@@ -235,7 +238,7 @@ func (c *config) discoverInternal() error {
 		postProcessor := postProcessor
 		_, found := (c.PostProcessors)[postProcessor]
 		if !found {
-			log.Printf("Using internal plugin for %s", postProcessor)
+			internallyUsed = append(internallyUsed, postProcessor)
 			c.PostProcessors[postProcessor] = func() (packer.PostProcessor, error) {
 				bin := fmt.Sprintf("%s%splugin%spacker-post-processor-%s",
 					packerPath, PACKERSPACE, PACKERSPACE, postProcessor)
@@ -243,6 +246,8 @@ func (c *config) discoverInternal() error {
 			}
 		}
 	}
+	sort.Strings(internallyUsed)
+	log.Printf("Using internal plugin for %v", internallyUsed)
 
 	return nil
 }
@@ -255,7 +260,7 @@ func (c *config) pluginClient(path string) *plugin.Client {
 	if err != nil {
 		// If that doesn't work, look for it in the same directory
 		// as the `packer` executable (us).
-		log.Printf("Plugin could not be found. Checking same directory as executable.")
+		log.Printf("Plugin could not be found at %s (%v). Checking same directory as executable.", originalPath, err)
 		exePath, err := osext.Executable()
 		if err != nil {
 			log.Printf("Couldn't get current exe path: %s", err)

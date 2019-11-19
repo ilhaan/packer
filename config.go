@@ -130,9 +130,10 @@ func (c *config) discover(path string) error {
 	if err != nil {
 		return err
 	}
-	for plugin, path := range pluginPaths {
+	for plugin := range pluginPaths {
+		plugin := plugin
 		c.Builders[plugin] = func() (packer.Builder, error) {
-			return c.pluginClient(path).Builder()
+			return c.pluginClient(pluginPaths[plugin]).Builder()
 		}
 	}
 
@@ -140,9 +141,10 @@ func (c *config) discover(path string) error {
 	if err != nil {
 		return err
 	}
-	for plugin, path := range pluginPaths {
+	for plugin := range pluginPaths {
+		plugin := plugin
 		c.PostProcessors[plugin] = func() (packer.PostProcessor, error) {
-			return c.pluginClient(path).PostProcessor()
+			return c.pluginClient(pluginPaths[plugin]).PostProcessor()
 		}
 	}
 
@@ -150,9 +152,10 @@ func (c *config) discover(path string) error {
 	if err != nil {
 		return err
 	}
-	for plugin, path := range pluginPaths {
+	for plugin := range pluginPaths {
+		plugin := plugin
 		c.Provisioners[plugin] = func() (packer.Provisioner, error) {
-			return c.pluginClient(path).Provisioner()
+			return c.pluginClient(pluginPaths[plugin]).Provisioner()
 		}
 	}
 	return nil
@@ -203,6 +206,7 @@ func (c *config) discoverInternal() error {
 	}
 
 	for builder := range command.Builders {
+		builder := builder
 		_, found := (c.Builders)[builder]
 		if !found {
 			log.Printf("Using internal plugin for %s", builder)
@@ -215,6 +219,7 @@ func (c *config) discoverInternal() error {
 	}
 
 	for provisioner := range command.Provisioners {
+		provisioner := provisioner
 		_, found := (c.Provisioners)[provisioner]
 		if !found {
 			log.Printf("Using internal plugin for %s", provisioner)
@@ -227,6 +232,7 @@ func (c *config) discoverInternal() error {
 	}
 
 	for postProcessor := range command.PostProcessors {
+		postProcessor := postProcessor
 		_, found := (c.PostProcessors)[postProcessor]
 		if !found {
 			log.Printf("Using internal plugin for %s", postProcessor)

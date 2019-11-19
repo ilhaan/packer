@@ -1,6 +1,8 @@
 package rpc
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"net/rpc"
 
@@ -24,7 +26,7 @@ type commonServer struct {
 }
 
 type ConfigSpecResponse struct {
-	ConfigSpec hcldec.ObjectSpec
+	ConfigSpec []byte
 }
 
 func (p *commonClient) ConfigSpec() hcldec.ObjectSpec {
@@ -35,15 +37,31 @@ func (p *commonClient) ConfigSpec() hcldec.ObjectSpec {
 	resp := &ConfigSpecResponse{}
 	cerr := p.client.Call(p.endpoint+".ConfigSpec", new(interface{}), resp)
 	if cerr != nil {
-		err := fmt.Errorf("ConfigSpec failed: %v", cerr) 
+		err := fmt.Errorf("ConfigSpec failed: %v", cerr)
 		panic(err.Error())
 	}
-	return resp.ConfigSpec
+
+	res := hcldec.ObjectSpec{}
+	err := gob.NewDecoder(bytes.NewReader(resp.ConfigSpec)).Decode(&res)
+	if err != nil {
+		panic("ici:" + err.Error())
+	}
+	return res
 }
 
-func (s *commonServer) ConfigSpec(_ *interface{}, reply *ConfigSpecResponse) error {
+func (s *commonServer) ConfigSpec(_ interface{}, reply *ConfigSpecResponse) error {
 	spec := s.selfConfigurable.ConfigSpec()
-	spec.
-	// reply.ConfigSpec =
-	return nil
+	b := bytes.NewBuffer(nil)
+	err := gob.NewEncoder(b).Encode(spec)
+	reply.ConfigSpec = b.Bytes()
+
+	return err
+}
+
+func init() {
+	gob.Register(new(hcldec.AttrSpec))
+	gob.Register(new(hcldec.BlockSpec))
+	gob.Register(new(hcldec.BlockAttrsSpec))
+	gob.Register(new(hcldec.BlockListSpec))
+	gob.Register(new(hcldec.BlockObjectSpec))
 }

@@ -7,6 +7,7 @@ import (
 	"net/rpc"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
+	"github.com/zclconf/go-cty/cty"
 )
 
 // commonClient allows to rpc call funcs that can be defined on the different
@@ -64,4 +65,5 @@ func init() {
 	gob.Register(new(hcldec.BlockAttrsSpec))
 	gob.Register(new(hcldec.BlockListSpec))
 	gob.Register(new(hcldec.BlockObjectSpec))
+	gob.Register(new(cty.Value))
 }

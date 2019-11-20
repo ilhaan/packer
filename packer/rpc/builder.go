@@ -1,10 +1,13 @@
 package rpc
 
 import (
+	"bytes"
 	"context"
+	"encoding/gob"
 	"log"
 
 	"github.com/hashicorp/packer/packer"
+	"github.com/zclconf/go-cty/cty"
 )
 
 // An implementation of packer.Builder where the builder is actually executed
@@ -35,6 +38,16 @@ type BuilderPrepareResponse struct {
 }
 
 func (b *builder) Prepare(config ...interface{}) ([]string, error) {
+	for i := range config {
+		if v, ok := config[i].(cty.Value); ok {
+			b := bytes.NewBuffer(nil)
+			err := gob.NewEncoder(b).Encode(v)
+			if err != nil {
+				return nil, err
+			}
+			config[i] = b.Bytes()
+		}
+	}
 	var resp BuilderPrepareResponse
 	cerr := b.client.Call("Builder.Prepare", &BuilderPrepareArgs{config}, &resp)
 	if cerr != nil {
@@ -87,6 +100,16 @@ func (b *builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 }
 
 func (b *BuilderServer) Prepare(args *BuilderPrepareArgs, reply *BuilderPrepareResponse) error {
+	for i := range args.Configs {
+		if b, ok := args.Configs[i].([]byte); ok {
+			t := cty.Value{}
+			err := gob.NewDecoder(bytes.NewReader(b)).Decode(&t)
+			if err != nil {
+				return err
+			}
+			args.Configs[i] = t
+		}
+	}
 	warnings, err := b.builder.Prepare(args.Configs...)
 	*reply = BuilderPrepareResponse{
 		Warnings: warnings,

@@ -160,8 +160,8 @@ type SSH struct {
 	SSHLocalTunnels []string `mapstructure:"ssh_local_tunnels"`
 
 	// SSH Internals
-	SSHPublicKey  []byte
-	SSHPrivateKey []byte
+	SSHPublicKey  []byte `mapstructure:"ssh_public_key"`
+	SSHPrivateKey []byte `mapstructure:"ssh_private_key"`
 }
 
 type SSHInterface struct {

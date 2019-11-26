@@ -81,7 +81,6 @@ type Communicator interface {
 }
 
 type ConfigurableCommunicator interface {
-	Communicator
 	HCL2Speccer
 	Configure(...interface{}) ([]string, error)
 }

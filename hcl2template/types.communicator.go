@@ -14,7 +14,7 @@ type Communicator struct {
 	// Given name
 	Name string
 
-	Communicator packer.Communicator
+	CommunicatorConfig packer.ConfigurableCommunicator
 
 	HCL2Ref HCL2Ref
 }
@@ -64,7 +64,7 @@ func (p *Parser) decodeCommunicatorConfig(block *hcl.Block) (*Communicator, hcl.
 		})
 	}
 
-	output.Communicator = communicator
+	output.CommunicatorConfig = communicator
 
 	return output, diags
 }

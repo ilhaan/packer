@@ -11,7 +11,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/hashicorp/hcl/v2/hcldec"
 	packerssh "github.com/hashicorp/packer/communicator/ssh"
+	"github.com/hashicorp/packer/helper/config"
 	"github.com/hashicorp/packer/helper/multistep"
 	helperssh "github.com/hashicorp/packer/helper/ssh"
 	"github.com/hashicorp/packer/packer"
@@ -163,6 +165,24 @@ type SSH struct {
 	SSHPublicKey  []byte `mapstructure:"ssh_public_key"`
 	SSHPrivateKey []byte `mapstructure:"ssh_private_key"`
 }
+
+func (c *SSH) ConfigSpec() hcldec.ObjectSpec   { return c.FlatMapstructure().HCL2Spec() }
+func (c *WinRM) ConfigSpec() hcldec.ObjectSpec { return c.FlatMapstructure().HCL2Spec() }
+
+func (c *SSH) Configure(raws ...interface{}) ([]string, error) {
+	err := config.Decode(c, nil, raws...)
+	return nil, err
+}
+
+func (c *WinRM) Configure(raws ...interface{}) ([]string, error) {
+	err := config.Decode(c, nil, raws...)
+	return nil, err
+}
+
+var (
+	_ packer.ConfigurableCommunicator = new(SSH)
+	_ packer.ConfigurableCommunicator = new(WinRM)
+)
 
 type SSHInterface struct {
 	// One of `public_ip`, `private_ip`, `public_dns`, or `private_dns`. If

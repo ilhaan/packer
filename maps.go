@@ -52,12 +52,12 @@ func (mob mapOfBuilder) Get(builder string) (packer.Builder, error) {
 	return d()
 }
 
-type mapOfCommunicator map[string]func() (packer.ConfigurableCommunicator, error)
+type mapOfCommunicator map[string]func() packer.ConfigurableCommunicator
 
 func (mob mapOfCommunicator) Get(communicator string) (packer.ConfigurableCommunicator, error) {
 	c, found := mob[communicator]
 	if !found {
 		return nil, fmt.Errorf("Unknown communicator %s", communicator)
 	}
-	return c()
+	return c(), nil
 }

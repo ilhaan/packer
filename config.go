@@ -254,6 +254,18 @@ func (c *config) discoverInternal() error {
 	}
 	sort.Strings(internallyUsed)
 	log.Printf("Using internal plugin for post-processors %v", internallyUsed)
+	internallyUsed = []string{}
+
+	for communicator := range command.Communicators {
+		communicator := communicator
+		_, found := (c.Communicators)[communicator]
+		if !found {
+			internallyUsed = append(internallyUsed, communicator)
+			c.Communicators[communicator] = command.Communicators[communicator]
+		}
+	}
+	sort.Strings(internallyUsed)
+	log.Printf("Using internal plugin for communicators %v", internallyUsed)
 
 	return nil
 }

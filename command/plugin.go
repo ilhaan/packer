@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/hashicorp/packer/helper/communicator"
 	"github.com/hashicorp/packer/packer"
 	"github.com/hashicorp/packer/packer/plugin"
 
@@ -194,6 +195,12 @@ var PostProcessors = map[string]packer.PostProcessor{
 	"vagrant-cloud":        new(vagrantcloudpostprocessor.PostProcessor),
 	"vsphere":              new(vspherepostprocessor.PostProcessor),
 	"vsphere-template":     new(vspheretemplatepostprocessor.PostProcessor),
+}
+
+var Communicators = map[string]func() packer.ConfigurableCommunicator{
+	"ssh":   func() packer.ConfigurableCommunicator { return new(communicator.SSH) },
+	"winrm": func() packer.ConfigurableCommunicator { return new(communicator.WinRM) },
+	// "none": func() packer.ConfigurableCommunicator { return new(communicator.None) },
 }
 
 var pluginRegexp = regexp.MustCompile("packer-(builder|post-processor|provisioner)-(.+)")

@@ -3,7 +3,7 @@ package rpc
 import (
 	"bytes"
 	"context"
-	"encoding/gob"
+	"encoding/json"
 	"log"
 
 	"github.com/hashicorp/packer/packer"
@@ -41,7 +41,7 @@ func (b *builder) Prepare(config ...interface{}) ([]string, error) {
 	for i := range config {
 		if v, ok := config[i].(cty.Value); ok {
 			b := bytes.NewBuffer(nil)
-			err := gob.NewEncoder(b).Encode(v)
+			err := json.NewEncoder(b).Encode(v)
 			if err != nil {
 				return nil, err
 			}
@@ -103,7 +103,7 @@ func (b *BuilderServer) Prepare(args *BuilderPrepareArgs, reply *BuilderPrepareR
 	for i := range args.Configs {
 		if b, ok := args.Configs[i].([]byte); ok {
 			t := cty.Value{}
-			err := gob.NewDecoder(bytes.NewReader(b)).Decode(&t)
+			err := json.NewDecoder(bytes.NewReader(b)).Decode(&t)
 			if err != nil {
 				return err
 			}
